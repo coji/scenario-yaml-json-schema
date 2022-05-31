@@ -29,10 +29,15 @@
                     "type": "object",
                     "description": "テキストメッセージ",
                     "required": ["lineText"],
+                    "additionalProperties": false,
                     "properties": {
                       "lineText": {
                         "type": "string",
                         "description": "テキストメッセージ"
+                      },
+                      "node_name": {
+                        "type": "string",
+                        "description": "ノードの名称"
                       }
                     }
                   },
@@ -40,6 +45,7 @@
                     "type": "object",
                     "description": "carousel",
                     "required": ["carousel"],
+                    "additionalProperties": false,
                     "properties": {
                       "carousel": {
                         "type": "object",
@@ -53,24 +59,234 @@
                           "columns": {
                             "type": "array",
                             "description": "カルーセルの列",
-                            "required": [""]
+                            "minLength": 1,
+                            "items": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "description": "カルーセルの列",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "image_url",
+                                    "title",
+                                    "text",
+                                    "action"
+                                  ],
+                                  "properties": {
+                                    "image_url": {
+                                      "type": "string",
+                                      "format": "uri"
+                                    },
+                                    "title": {
+                                      "type": "string"
+                                    },
+                                    "text": {
+                                      "type": "string"
+                                    },
+                                    "action": {
+                                      "type": "object",
+                                      "required": [
+                                        "type",
+                                        "display_text",
+                                        "uri"
+                                      ],
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "type": {
+                                          "type": "string",
+                                          "enum": ["uri"]
+                                        },
+                                        "display_text": {
+                                          "type": "string"
+                                        },
+                                        "uri": {
+                                          "type": "string",
+                                          "format": "uri"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
                           }
                         }
+                      },
+                      "node_name": {
+                        "type": "string",
+                        "description": "ノードの名称"
                       }
                     }
                   },
                   {
                     "type": "object",
                     "description": "画像",
-                    "required": ["original", "preview"],
+                    "required": ["lineImage"],
+                    "additionalProperties": false,
                     "properties": {
-                      "original": {
-                        "type": "string",
-                        "format": "url"
+                      "lineImage": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "description": "画像",
+                        "required": ["original", "preview"],
+                        "properties": {
+                          "original": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "高解像度画像のURL"
+                          },
+                          "preview": {
+                            "type": "string",
+                            "format": "uri",
+                            "description": "低解像度画像のURL"
+                          }
+                        }
                       },
-                      "preview": {
+                      "node_name": {
                         "type": "string",
-                        "format": "url"
+                        "description": "ノードの名称"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "ボタンバブル",
+                    "required": ["buttonBubble"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "buttonBubble": {
+                        "type": "object",
+                        "description": "ボタンバブル",
+                        "additionalProperties": false,
+                        "required": ["notification_text", "text", "actions"],
+                        "properties": {
+                          "notification_text": {
+                            "type": "string",
+                            "description": "ボタンの通知テキスト"
+                          },
+                          "text": {
+                            "type": "string",
+                            "description": "ボタンのテキスト"
+                          },
+                          "actions": {
+                            "type": "array",
+                            "description": "ボタンタップ時のアクション",
+                            "minLength": 1,
+                            "items": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "description": "ボタンタップ時のアクション",
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "type",
+                                    "display_text",
+                                    "message_text",
+                                    "dest"
+                                  ],
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "enum": ["postback"],
+                                      "description": "ボタンタップ時のアクションの種類"
+                                    },
+                                    "display_text": {
+                                      "type": "string",
+                                      "description": "表示するテキスト"
+                                    },
+                                    "message_text": {
+                                      "type": "string",
+                                      "description": "メッセージのテキスト"
+                                    },
+                                    "dest": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "description": "タグを設定することができます。",
+                                      "items": {
+                                        "type": "object",
+                                        "description": "設定するタグとその内容",
+                                        "required": ["key", "value"],
+                                        "additionalProperties": false,
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "value": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "description": "Webページを開く",
+                                  "required": ["type", "display_text", "uri"],
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "type": {
+                                      "type": "string",
+                                      "enum": ["uri"],
+                                      "description": "ボタンタップ時のアクションの種類"
+                                    },
+                                    "display_text": {
+                                      "type": "string",
+                                      "description": "表示するテキスト"
+                                    },
+                                    "uri": {
+                                      "type": "string",
+                                      "format": "uri",
+                                      "description": "WebページのURL"
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "node_name": {
+                        "type": "string",
+                        "description": "ノードの名称"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "分岐",
+                    "required": ["branches"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "branches": {
+                        "type": "array",
+                        "description": "分岐",
+                        "minLength": 2,
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "description": "分岐",
+                              "required": ["conditions", "dest"],
+                              "additionalProperties": false,
+                              "properties": {
+                                "conditions": {
+                                  "type": "array",
+                                  "description": "条件",
+                                  "minLength": 1,
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "dest": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          ]
+                        }
                       }
                     }
                   }
