@@ -9,7 +9,6 @@
     "node_groups": {
       "type": "object",
       "minProperties": 1,
-      "maxProperties": 1,
       "description": "ノードグループの定義。複数のノードグループをぶら下げることができますyo!。",
       "patternProperties": {
         "": {
@@ -57,6 +56,21 @@
                             "required": [""]
                           }
                         }
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "description": "画像",
+                    "required": ["original", "preview"],
+                    "properties": {
+                      "original": {
+                        "type": "string",
+                        "format": "url"
+                      },
+                      "preview": {
+                        "type": "string",
+                        "format": "url"
                       }
                     }
                   }
